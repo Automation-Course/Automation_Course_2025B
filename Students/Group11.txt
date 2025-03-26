@@ -1,0 +1,145 @@
+package converter;
+
+import java.util.Scanner;
+
+public class BaseConverterMenu {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {// תפריט
+            System.out.println("=== Base Converter Menu ===");
+            System.out.println("1 - Binary to Hex");
+            System.out.println("2 - Hex to Binary");
+            System.out.println("0 - Exit");
+            System.out.print("Enter your choice: ");
+
+            String input = scanner.nextLine();
+            int choice;
+
+            try {
+                choice = Integer.parseInt(input); // המרה של הקלט ל-int
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a valid number.");
+                continue; // אם הקלט לא ניתן להמיר, חוזרים לתפריט
+            }
+
+            // בדיקת טווח הבחירה
+            if (choice < 0 || choice > 2) {
+                System.out.println("Invalid input. Please enter a number in the range [0-2].\n");
+                continue; // אם הקלט לא בטווח, חוזרים לתפריט
+            }
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter binary number: ");
+                    String binary = scanner.nextLine();
+                    convertBinaryToHex(binary);
+                    break;
+                case 2:
+                    System.out.print("Enter hexadecimal number: ");
+                    String hex = scanner.nextLine();
+                    convertHexToBinary(hex);
+                    break;
+                case 3:
+                    System.out.println("Returning to menu...\n");
+                    continue; // חזרה לתפריט
+                case 0:
+                    System.out.println("Goodbye!");
+                    scanner.close();
+                    return; // יציאה מהתוכנית
+                default:
+                    System.out.println("Invalid choice.\n");
+            }
+
+            System.out.println(); // רווח בין פעולות
+        }
+    }
+
+    public static void convertBinaryToHex(String binary) {
+        try {
+            int decimal = binaryToDecimal(binary);      // המרה ידנית מבינארי לעשרוני
+            String hex = decimalToHex(decimal);         // המרה ידנית מעשרוני להקס
+            System.out.println("Hex result: " + hex);
+        } catch (Exception e) {
+            System.out.println("Invalid binary input.");
+        }
+    }
+
+    public static int binaryToDecimal(String binary) {
+        int decimal = 0;
+        int power = 0;
+
+        for (int i = binary.length() - 1; i >= 0; i--) {
+            char bit = binary.charAt(i);
+            if (bit == '1') {
+                decimal += Math.pow(2, power);
+            } else if (bit != '0') {
+                throw new IllegalArgumentException("Invalid binary digit: " + bit);
+            }
+            power++;
+        }
+
+        return decimal;
+    }
+
+    public static String decimalToHex(int decimal) {
+        if (decimal == 0) return "0";
+
+        String hexDigits = "0123456789ABCDEF";
+        String hex = "";
+
+        while (decimal > 0) {
+            int remainder = decimal % 16;
+            hex = hexDigits.charAt(remainder) + hex;
+            decimal /= 16;
+        }
+
+        return hex;
+    }
+
+
+ // ========== Hex to Binary ==========
+    public static void convertHexToBinary(String hex) {
+        try {
+            int decimal = hexToDecimal(hex);
+            String binary = decimalToBinary(decimal);
+            System.out.println("Binary result: " + binary);
+        } catch (Exception e) {
+            System.out.println("Invalid hexadecimal input.");
+        }
+    }
+
+    public static int hexToDecimal(String hex) {
+        hex = hex.toUpperCase();
+        String hexDigits = "0123456789ABCDEF";
+        int decimal = 0;
+        int power = 0;
+
+        for (int i = hex.length() - 1; i >= 0; i--) {
+            char digit = hex.charAt(i);
+            int value = hexDigits.indexOf(digit);
+            if (value == -1) {
+                throw new IllegalArgumentException("Invalid hex digit: " + digit);
+            }
+            decimal += value * Math.pow(16, power);
+            power++;
+        }
+
+        return decimal;
+    }
+
+    public static String decimalToBinary(int decimal) {
+        if (decimal == 0) return "0";
+
+        String binary = "";
+        while (decimal > 0) {
+            int remainder = decimal % 2;
+            binary = remainder + binary;
+            decimal /= 2;
+        }
+
+        return binary;
+    }
+      
+}
