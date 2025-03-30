@@ -1,0 +1,76 @@
+# Convert binary to hexadecimal
+def binary_to_hex(binary_str):
+    hex_map = "0123456789ABCDEF"  # Hexadecimal conversion table
+
+    # Check for valid binary input (only 0 and 1)
+    for char in binary_str:
+        if char not in ('0', '1'):
+            return "Invalid binary input, Please try again."
+
+    while len(binary_str) % 4 != 0:
+        binary_str = '0' + binary_str
+
+    hex_result = ""
+    # Convert every 4 digits to a hexadecimal digit
+    for i in range(0, len(binary_str), 4):
+        group = binary_str[i:i + 4]
+
+        decimal_value = 0
+        for j in range(4):
+            if group[j] == '1':
+                decimal_value += 2 ** (3 - j)
+
+        hex_result += hex_map[decimal_value]
+
+    return hex_result
+
+
+# Convert hexadecimal to binary
+def hex_to_binary(hex_input):
+    hex_map = {
+        '0': '0000', '1': '0001', '2': '0010', '3': '0011',
+        '4': '0100', '5': '0101', '6': '0110', '7': '0111',
+        '8': '1000', '9': '1001', 'A': '1010', 'B': '1011',
+        'C': '1100', 'D': '1101', 'E': '1110', 'F': '1111'
+    }
+
+    binary_result = ""
+    # Convert each hex digit to binary
+    for char in hex_input.upper():
+        if char in hex_map:
+            binary_result += hex_map[char]
+        else:
+            return "Invalid hexadecimal input, Please try again."
+
+    return binary_result
+
+
+# Main program
+def main():
+    while True:
+        print("\n--- Converter ---")
+        print("1 - Binary to Hexadecimal")
+        print("2 - Hexadecimal to Binary")
+        print("3 - Exit")
+        choice = input("Enter your choice (1, 2, or 3): ")
+
+        if choice == '1':
+            binary_input = input("Enter a binary number: ")
+            result = binary_to_hex(binary_input)
+            print("Hexadecimal result:", result)
+
+        elif choice == '2':
+            hex_input = input("Enter a hexadecimal number: ")
+            result = hex_to_binary(hex_input)
+            print("Binary result:", result)
+
+        elif choice == '3':
+            print("Goodbye!")
+            break
+
+        else:
+            print("Invalid choice. Please try again.")
+
+
+# Run the program
+main()
