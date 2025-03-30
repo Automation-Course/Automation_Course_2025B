@@ -1,4 +1,4 @@
-# Convert binary to hexadecimal
+# Convert Binary to hexadecimal
 def binary_to_hex(binary_str):
     hex_map = "0123456789ABCDEF"  # Hexadecimal conversion table
 
