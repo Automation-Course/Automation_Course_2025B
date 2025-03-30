@@ -45,7 +45,7 @@ def hex_to_binary(hex_input):
     return binary_result
 
 
-# Main program
+# Main  Program
 def main():
     while True:
         print("\n--- Converter ---")
