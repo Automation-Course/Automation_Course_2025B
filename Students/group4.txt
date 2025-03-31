@@ -1,0 +1,35 @@
+def binary_to_hex(binary_str):
+    try:
+        # Convert binary string to decimal, then to hexadecimal
+        decimal = int(binary_str, 2)
+        hex_value = hex(decimal)[2:].upper()
+        return hex_value
+    except ValueError:
+        return "Error: Invalid binary input."
+
+
+def hex_to_binary(hex_str):
+    try:
+        # Convert hexadecimal string to decimal, then to binary
+        decimal = int(hex_str, 16)
+        binary_value = bin(decimal)[2:]
+        return binary_value
+    except ValueError:
+        return "Error: Invalid hexadecimal input."
+
+
+# Basic user interface
+if __name__ == "__main__":
+    print("Base Conversion Calculator")
+    print("1 - Convert binary to hexadecimal")
+    print("2 - Convert hexadecimal to binary")
+    choice = input("Enter your choice (1 or 2): ")
+
+    if choice == "1":
+        binary_input = input("Enter a binary number: ")
+        print("Hexadecimal result:", binary_to_hex(binary_input))
+    elif choice == "2":
+        hex_input = input("Enter a hexadecimal number: ")
+        print("Binary result:", hex_to_binary(hex_input))
+    else:
+        print("Invalid choice.")
