@@ -1,0 +1,112 @@
+# הפיכת בינארי למשלים ל-2
+def twos_complement(binary_str):
+    flipped = ''.join('1' if b == '0' else '0' for b in binary_str)
+    result = list(flipped)
+    carry = 1
+    for i in range(len(result) - 1, -1, -1):
+        if result[i] == '1' and carry == 1:
+            result[i] = '0'
+        elif result[i] == '0' and carry == 1:
+            result[i] = '1'
+            carry = 0
+    return ''.join(result)
+
+# המרת מספר שלם או עשרוני בינארי להקסדצימלי (כולל שלילי לפי משלים ל-2)
+def binary_to_hex(binary_str, negative=False):
+    if '.' in binary_str:
+        int_part, frac_part = binary_str.split('.')
+    else:
+        int_part, frac_part = binary_str, ''
+
+    if not all(c in '01' for c in int_part + frac_part):
+        return "שגיאה: קלט בינארי לא תקין"
+
+    if negative:
+        length = max(8, len(int_part))
+        int_part = int_part.zfill(length)
+        int_part = twos_complement(int_part)
+
+    while len(int_part) % 4 != 0:
+        int_part = '0' + int_part
+
+    while len(frac_part) % 4 != 0:
+        frac_part += '0'
+
+    binary_to_hex_map = {
+        '0000': '0', '0001': '1', '0010': '2', '0011': '3',
+        '0100': '4', '0101': '5', '0110': '6', '0111': '7',
+        '1000': '8', '1001': '9', '1010': 'A', '1011': 'B',
+        '1100': 'C', '1101': 'D', '1110': 'E', '1111': 'F'
+    }
+
+    hex_int = ''.join(binary_to_hex_map[int_part[i:i+4]] for i in range(0, len(int_part), 4))
+    hex_frac = ''.join(binary_to_hex_map[frac_part[i:i+4]] for i in range(0, len(frac_part), 4))
+
+    if frac_part:
+        return hex_int + '.' + hex_frac
+    else:
+        return hex_int
+
+# המרת הקסדצימלי לבינארי (כולל שלילי לפי משלים ל-2)
+def hex_to_binary(hex_str, negative=False):
+    hex_str = hex_str.upper()
+
+    if not all(c in '0123456789ABCDEF.' for c in hex_str):
+        return "שגיאה: קלט הקסדצימלי לא תקין"
+
+    if '.' in hex_str:
+        int_part, frac_part = hex_str.split('.')
+    else:
+        int_part, frac_part = hex_str, ''
+
+    hex_to_binary_map = {
+        '0': '0000', '1': '0001', '2': '0010', '3': '0011',
+        '4': '0100', '5': '0101', '6': '0110', '7': '0111',
+        '8': '1000', '9': '1001', 'A': '1010', 'B': '1011',
+        'C': '1100', 'D': '1101', 'E': '1110', 'F': '1111'
+    }
+
+    binary_int = ''.join(hex_to_binary_map[c] for c in int_part)
+    binary_frac = ''.join(hex_to_binary_map[c] for c in frac_part)
+
+    if negative:
+        length = max(8, len(binary_int))
+        binary_int = binary_int.zfill(length)
+        binary_int = twos_complement(binary_int)
+
+    if frac_part:
+        return binary_int + '.' + binary_frac
+    else:
+        return binary_int
+
+# תפריט
+
+def main():
+    while True:
+        print("\nמחשבון המרות:")
+        print("1. בינארי להקסדצימלי")
+        print("2. הקסדצימלי לבינארי")
+        print("3. יציאה")
+        choice = input("בחר פעולה (1/2/3): ")
+
+        if choice == '1':
+            binary_input = input("הכנס מספר בינארי: ")
+            is_negative = input("האם המספר שלילי? (כן/לא): ").strip().lower() == 'כן'
+            result = binary_to_hex(binary_input, is_negative)
+            print("תוצאה:", result)
+
+        elif choice == '2':
+            hex_input = input("הכנס מספר הקסדצימלי: ")
+            is_negative = input("האם המספר שלילי? (כן/לא): ").strip().lower() == 'כן'
+            result = hex_to_binary(hex_input, is_negative)
+            print("תוצאה:", result)
+
+        elif choice == '3':
+            print("להתראות!")
+            break
+
+        else:
+            print("בחירה לא תקפה")
+
+if __name__ == "__main__":
+    main()
