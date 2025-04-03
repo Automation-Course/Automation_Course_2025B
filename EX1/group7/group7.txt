@@ -1,0 +1,45 @@
+def binary_to_hex(binary_str):
+    try:
+        decimal = int(binary_str, 2)  # ממיר מבינארי לעשרוני
+        return hex(decimal)[2:].upper()  # ממיר להקסדצימלי באותיות גדולות
+    except ValueError:
+        return "שגיאה: קלט בינארי לא חוקי."
+
+def hex_to_binary(hex_str):
+    try:
+        decimal = int(hex_str, 16)  # ממיר מהקסדצימלי לעשרוני
+        return bin(decimal)[2:]  # ממיר לבינארי (ללא '0b')
+    except ValueError:
+        return "שגיאה: קלט הקסדצימלי לא חוקי."
+
+def main():
+    print("מחשבון להמרת מספרים בין הקסדצימלי לבינארי:")
+
+    while True:
+        print("\nבחר את סוג ההמרה:")
+        print("1. המרה מבינארי להקסדצימלי")
+        print("2. המרה מהקסדצימלי לבינארי")
+        print("3. יציאה")
+
+        choice = input("הכנס את הבחירה שלך (1, 2 או 3): ")
+
+        if choice == "1":
+            binary_input = input("הכנס מספר בינארי : ")
+            result = binary_to_hex(binary_input)
+            print("תוצאה בהקסדצימלי:", result)
+
+        elif choice == "2":
+            hex_input = input("הכנס מספר הקסדצימלי : ")
+            result = hex_to_binary(hex_input)
+            print("תוצאה בבינארי:", result)
+
+        elif choice == "3":
+            print("תודה שהשתמשת במחשבון. להתראות! ")
+            break  # יציאה מהלולאה
+
+        else:
+            print("בחירה לא חוקית. נסה שוב.")
+
+
+if __name__ == "__main__":
+    main()
