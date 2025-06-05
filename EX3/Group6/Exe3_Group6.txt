@@ -1,0 +1,120 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+#include <Servo.h>
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+Servo myServo;
+
+// הגדרת פינים
+#define BUTTON_PIN 2
+#define SERVO_PIN 3
+#define LED_PIN 4
+#define TRIG_PIN 5
+#define ECHO_PIN 6
+
+int hits = 0;
+const int roundCount = 10;
+bool trainingStarted = false;
+
+// הצהרות פונקציות
+void throwBall();
+bool checkHit();
+
+void setup() {
+  pinMode(BUTTON_PIN, INPUT);
+  pinMode(LED_PIN, OUTPUT);
+  pinMode(TRIG_PIN, OUTPUT);
+  pinMode(ECHO_PIN, INPUT);
+
+  lcd.init();
+  lcd.backlight();
+  Serial.begin(9600);
+
+  lcd.setCursor(0, 0);
+  lcd.print("Press to start");
+}
+
+void loop() {
+  if (!trainingStarted && digitalRead(BUTTON_PIN) == HIGH) {
+    delay(200);
+    while (digitalRead(BUTTON_PIN) == HIGH);  // המתנה לשחרור לחיצה
+    trainingStarted = true;
+    hits = 0;
+
+    myServo.attach(SERVO_PIN);  // חיבור הסרוו בתחילת סבב
+
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Training started");
+    delay(1000);
+
+    for (int i = 1; i <= roundCount; i++) {
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("Shot ");
+      lcd.print(i);
+
+      throwBall();
+
+      if (checkHit()) {
+        hits++;
+        digitalWrite(LED_PIN, HIGH);
+        Serial.println("Hit detected!");
+      } else {
+        digitalWrite(LED_PIN, LOW);
+        Serial.println("Missed.");
+      }
+
+      delay(1000);
+      digitalWrite(LED_PIN, LOW);
+    }
+
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Score:");
+    lcd.setCursor(0, 1);
+    lcd.print(hits);
+    lcd.print(" / ");
+    lcd.print(roundCount);
+
+    Serial.print("Training complete. Hits: ");
+    Serial.println(hits);
+
+    myServo.write(0);
+    myServo.detach();  // ניתוק הסרוו
+
+    trainingStarted = false;
+    delay(5000);
+    lcd.clear();
+    lcd.print("Press to start");
+  }
+}
+
+void throwBall() {
+  myServo.write(0);
+  delay(500);
+  myServo.write(90);
+  delay(500);
+  myServo.write(0);
+}
+
+bool checkHit() {
+  long duration;
+  int distance;
+
+  digitalWrite(TRIG_PIN, LOW);
+  delayMicroseconds(2);
+  digitalWrite(TRIG_PIN, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG_PIN, LOW);
+
+  duration = pulseIn(ECHO_PIN, HIGH);
+  distance = duration * 0.034 / 2;
+
+  Serial.print("Distance detected: ");
+  Serial.print(distance);
+  Serial.println(" cm");
+
+  return (distance > 0 && distance < 45);
+}
+
